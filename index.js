@@ -31,6 +31,7 @@ async function run() {
 		// replace above  two lines by this code 
 
 		const userCollection = client.db("silkSaree").collection("user");
+		const orderCollection = client.db('silkSaree').collection('order');
 		// create a document to insert
 		/* const doc = {
 		  title: "Record of a Shriveled Datum",
@@ -91,6 +92,20 @@ async function run() {
 			const result = await userCollection.deleteOne(query);
 			res.send(result);
 		})
+		// get order 
+		app.get('/order', async (req, res) => {
+			const email = req.query.email;
+			const query = {email};
+			const cursor = userCollection.find(query);
+			const order = await cursor.toArray();
+			res.send(order);
+		});
+		// ordered post 
+		app.post('/order', async (req, res) => {
+			const order = req.body;
+			const result = await orderCollection.insertOne(order);
+			res.send(result);
+		} )
 
 
 
