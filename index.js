@@ -107,6 +107,14 @@ async function run() {
 			const order = await cursor.toArray();
 			res.send(order);
 		});
+		app.get('/orders', async (req, res) => {
+			const email = req.query.email;
+			const query = {email};
+			const cursor = userCollection.find(query);
+			const order = await cursor.toArray();
+			res.send(order);
+			
+		});
 		// ordered post 
 		app.post('/order', async (req, res) => {
 			const order = req.body;
