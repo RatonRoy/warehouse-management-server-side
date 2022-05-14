@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const  jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { ObjectID } = require('bson');
@@ -27,12 +27,12 @@ function verifyJwt(req, res, next) {
 		if (error) {
 			return res.status(403).send({ message: 'Forbidden access' });
 		}
-		
+
 		req.decoded = decoded;
 		next();
 	})
-	
-	
+
+
 }
 
 app.get('/', (req, res) => {
@@ -40,7 +40,6 @@ app.get('/', (req, res) => {
 });
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@clustersaree.fhpfv.mongodb.net/silkSaree?retryWrites=true&w=majority`;
-// const uri = "mongodb+srv://silkSaree:bf6bYOciDyyaPQBv@clustersaree.fhpfv.mongodb.net/silkSaree?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
@@ -53,11 +52,11 @@ async function run() {
 		app.post('/login', async (req, res) => {
 			const user = req.body;
 			const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-				 expiresIn : '1d'
+				expiresIn: '1d'
 			})
-			res.send({accessToken});
+			res.send({ accessToken });
 		})
-		// get the users
+		// get the inventory only 6
 
 		app.get('/inventory', async (req, res) => {
 			const query = {};
@@ -65,12 +64,14 @@ async function run() {
 			const fruits = await cursor.limit(6).toArray();
 			res.send(fruits);
 		});
+		// get the all inventory 
 		app.get('/allinventory', async (req, res) => {
 			const query = {};
 			const cursor = userCollection.find(query);
 			const allFruits = await cursor.toArray();
 			res.send(allFruits);
 		});
+
 		app.get('/orders', verifyJwt, async (req, res) => {
 			const decodedEmail = req.decoded.email;
 			const email = req.query.email;
@@ -83,7 +84,7 @@ async function run() {
 			else {
 				res.status(403).send({ message: 'Forbidden access' });
 			}
-			
+
 		})
 		// for updating route 
 		app.get('/allinventory/:id', async (req, res) => {
@@ -110,6 +111,7 @@ async function run() {
 		})
 
 
+
 		// update the user data 
 		app.put('/allinventory/:InventoryId', async (req, res) => {
 			const id = req.params.InventoryId;
@@ -133,6 +135,13 @@ async function run() {
 			const query = { _id: ObjectId(id) };
 			const deletOrders = await orderCollection.deleteOne(query);
 			res.send(deletOrders);
+		})
+
+		app.delete('/allinventory/:id', async (req, res) => {
+			const id = req.params.id;
+			const query = {_id: ObjectId(id)};
+			const result = await userCollection.deleteOne(query);
+			res.send(result);
 		})
 
 
