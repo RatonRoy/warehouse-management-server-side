@@ -97,7 +97,6 @@ async function run() {
 		// send data to the server 
 		app.post('/allinventory', async (req, res) => {
 			const newFruit = req.body;
-			// console.log('adding a new user', newFruit);
 			const result = await userCollection.insertOne(newFruit);
 			res.send(result);
 
@@ -153,11 +152,6 @@ async function run() {
 
 
 
-
-
-		/* const user = { name: 'def', email: 'def@gmail.com' }
-		const result = await userCollection.insertOne(user);
-		console.log(`A document was inserted with the _id: ${result.insertedId}`); */
 	}
 	finally {
 		/* 	await client.close(); */
